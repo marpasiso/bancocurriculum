@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYER
+  SUPER_ADMIN
+  FINANCE_OWNER
+}
+
+enum PaymentStatus {
+  RECORDED
+  PAID
+  USED
+}
+
+enum CommissionStatus {
+  PENDING
+  PAID
+  CANCELED
+}
+
+enum LgpdRequestType {
+  ACCESS
+  CORRECTION
+  DELETE_REVIEW
+  REVOCATION
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  role         UserRole
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  employer     Employer?
+  sessions     Session[]
+  auditLogs    AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Employer {
+  id                   String                @id @default(cuid())
+  userId               String                @unique
+  companyName          String
+  contactName          String
+  document             String
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments             Payment[]
+  subscriptions        Subscription[]
+  candidateViews       CandidateView[]
+  developerCommissions DeveloperCommission[]
+  jobFunctions         JobFunction[]
+}
+
+model Candidate {
+  id               String            @id @default(cuid())
+  fullName         String
+  email            String
+  phone            String
+  city             String
+  state            String
+  desiredRole      String
+  summary          String            @db.Text
+  experience       String            @db.Text
+  education        String            @db.Text
+  references       String?           @db.Text
+  isActive         Boolean           @default(true)
+  consentAccepted  Boolean           @default(false)
+  consentAcceptedAt DateTime?
+  consentTextVersion String?
+  consentTextSnapshot String?        @db.Text
+  consentIp        String?
+  consentUserAgent String?           @db.Text
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  consentSnapshots ConsentSnapshot[]
+  views            CandidateView[]
+  jobFunctions     CandidateJobFunction[]
+  interestFunctions CandidateInterestFunction[]
+
+  @@index([isActive])
+}
+
+model JobFunction {
+  id          String                 @id @default(cuid())
+  employerId  String
+  name        String                 @db.VarChar(58)
+  description String?                @db.Text
+  isActive    Boolean                @default(true)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  employer    Employer               @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  candidates  CandidateJobFunction[]
+
+  @@unique([employerId, name])
+  @@index([isActive])
+  @@index([name])
+}
+
+model CandidateJobFunction {
+  id            String      @id @default(cuid())
+  candidateId   String
+  jobFunctionId String
+  createdAt     DateTime    @default(now())
+  candidate     Candidate   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobFunction   JobFunction @relation(fields: [jobFunctionId], references: [id])
+
+  @@index([candidateId])
+  @@index([jobFunctionId])
+}
+
+model SystemJobFunction {
+  id          String                      @id @default(cuid())
+  name        String                      @unique @db.VarChar(58)
+  description String?                     @db.Text
+  isActive    Boolean                     @default(true)
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+  candidates  CandidateInterestFunction[]
+
+  @@index([isActive])
+  @@index([name])
+}
+
+model CandidateInterestFunction {
+  id                  String            @id @default(cuid())
+  candidateId          String
+  systemJobFunctionId  String
+  createdAt            DateTime          @default(now())
+  candidate            Candidate         @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  systemJobFunction    SystemJobFunction @relation(fields: [systemJobFunctionId], references: [id])
+
+  @@index([candidateId])
+  @@index([systemJobFunctionId])
+}
+
+model ConsentSnapshot {
+  id          String    @id @default(cuid())
+  candidateId String
+  version     String
+  text        String    @db.Text
+  acceptedAt  DateTime  @default(now())
+  ipAddress   String?
+  userAgent   String?   @db.Text
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+}
+
+model LgpdRequest {
+  id          String          @id @default(cuid())
+  type        LgpdRequestType
+  fullName    String
+  email       String
+  description String          @db.Text
+  createdAt   DateTime        @default(now())
+}
+
+model Payment {
+  id                  String               @id @default(cuid())
+  employerId          String
+  amountCents         Int
+  pixCode             String
+  provider            String               @default("manual_pix")
+  note                String?              @db.Text
+  status              PaymentStatus        @default(RECORDED)
+  paidAt              DateTime?
+  createdById         String
+  createdAt           DateTime             @default(now())
+  employer            Employer             @relation(fields: [employerId], references: [id])
+  developerCommission DeveloperCommission?
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  employerId  String
+  paymentId   String   @unique
+  startsAt    DateTime
+  endsAt      DateTime
+  createdById String
+  createdAt   DateTime @default(now())
+  employer    Employer @relation(fields: [employerId], references: [id])
+}
+
+model CandidateView {
+  id          String    @id @default(cuid())
+  employerId  String
+  candidateId String
+  viewedById  String
+  createdAt   DateTime  @default(now())
+  employer    Employer  @relation(fields: [employerId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  type      String
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model DeveloperCommission {
+  id               String           @id @default(cuid())
+  paymentId        String           @unique
+  employerId       String
+  grossAmount      Decimal          @db.Decimal(10, 2)
+  commissionRate   Decimal          @db.Decimal(5, 2)
+  commissionAmount Decimal          @db.Decimal(10, 2)
+  status           CommissionStatus @default(PENDING)
+  generatedAt      DateTime         @default(now())
+  paidAt           DateTime?
+  notes            String?          @db.Text
+  payment          Payment          @relation(fields: [paymentId], references: [id])
+  employer         Employer         @relation(fields: [employerId], references: [id])
+
+  @@index([employerId])
+  @@index([status])
+  @@index([generatedAt])
+}

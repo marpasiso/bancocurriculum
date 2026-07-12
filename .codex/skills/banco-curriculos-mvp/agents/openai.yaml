@@ -1,0 +1,4 @@
+interface:
+  display_name: "Banco Curriculos MVP"
+  short_description: "Guia do MVP Next.js, Prisma e LGPD"
+  default_prompt: "Use $banco-curriculos-mvp para implementar ou revisar alteracoes no MVP local de banco de curriculos."

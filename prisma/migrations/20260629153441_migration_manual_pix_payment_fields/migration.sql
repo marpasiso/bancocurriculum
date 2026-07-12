@@ -1,0 +1,6 @@
+-- Intentionally empty.
+--
+-- The manual Pix columns were already added by migration
+-- 20260629143000_add_manual_pix_payment_fields. The SQL previously stored here
+-- attempted to drop indexes required by existing foreign keys and then recreate
+-- those same foreign keys, which fails on MySQL/MariaDB with error 1553.
