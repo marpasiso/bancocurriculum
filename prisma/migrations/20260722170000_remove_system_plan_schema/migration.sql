@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS `DeveloperCommission`;
+
+UPDATE `User`
+SET `role` = 'SUPER_ADMIN'
+WHERE `role` = 'FINANCE_OWNER';
+
+ALTER TABLE `User`
+  MODIFY `role` ENUM('ADMIN', 'EMPLOYER', 'SUPER_ADMIN') NOT NULL;

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Banco Curriculos Design CSS"
+  short_description: "Padrao visual e CSS do MVP"
+  default_prompt: "Use $banco-curriculos-design-css para criar ou ajustar interfaces e CSS do MVP de banco de curriculos."
