@@ -9,8 +9,23 @@ import {
   type BrazilianState
 } from "@/lib/brazilian-states";
 
-export function CandidateStateAutocomplete() {
-  const [selected, setSelected] = useState<BrazilianState | null>(null);
+type CandidateStateAutocompleteProps = {
+  name?: string;
+  onChange?: (value: BrazilianState | null) => void;
+  value?: BrazilianState | null;
+};
+
+export function CandidateStateAutocomplete({ name = "state", onChange, value }: CandidateStateAutocompleteProps) {
+  const [internalSelected, setInternalSelected] = useState<BrazilianState | null>(null);
+  const selected = value === undefined ? internalSelected : value;
+
+  function handleChange(nextValue: BrazilianState | null) {
+    if (value === undefined) {
+      setInternalSelected(nextValue);
+    }
+
+    onChange?.(nextValue);
+  }
 
   return (
     <label>
@@ -19,9 +34,9 @@ export function CandidateStateAutocomplete() {
         autoHighlight
         fullWidth
         getOptionLabel={formatBrazilianStateOption}
-        isOptionEqualToValue={(option, value) => option.code === value.code}
+        isOptionEqualToValue={(option, currentValue) => option.code === currentValue.code}
         noOptionsText="Nenhum estado encontrado"
-        onChange={(_, value) => setSelected(value)}
+        onChange={(_, nextValue) => handleChange(nextValue)}
         options={brazilianStates}
         renderInput={(params) => (
           <TextField
@@ -83,7 +98,7 @@ export function CandidateStateAutocomplete() {
         }}
         value={selected}
       />
-      <input name="state" readOnly type="hidden" value={selected?.code ?? ""} />
+      <input name={name} readOnly type="hidden" value={selected?.code ?? ""} />
     </label>
   );
 }

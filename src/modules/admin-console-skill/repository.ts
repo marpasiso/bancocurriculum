@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
 export async function listEmployersForAdminConsole() {
@@ -180,10 +180,19 @@ export async function findDataRequestForCandidateAnonymization(input: { email: s
   return prisma.lgpdRequest.findFirst({
     where: {
       email: input.email,
+      status: { not: "COMPLETED" },
       type: { in: ["DELETE_REVIEW", "REVOCATION"] }
     },
     orderBy: { createdAt: "desc" },
     select: { id: true, type: true, createdAt: true }
+  });
+}
+
+export async function completeDataRequestForCandidateAnonymization(id: string) {
+  return prisma.lgpdRequest.update({
+    where: { id },
+    data: { status: "COMPLETED" },
+    select: { id: true, status: true }
   });
 }
 
@@ -268,6 +277,20 @@ export async function anonymizeCandidateForAdminConsole(candidateId: string) {
   });
 }
 
+export async function deleteCandidateForAdminConsole(candidateId: string) {
+  return prisma.$transaction(async (tx) => {
+    await tx.candidateView.deleteMany({ where: { candidateId } });
+    await tx.candidateReservation.deleteMany({ where: { candidateId } });
+    await tx.candidateInterestFunction.deleteMany({ where: { candidateId } });
+    await tx.candidateJobFunction.deleteMany({ where: { candidateId } });
+    await tx.consentSnapshot.deleteMany({ where: { candidateId } });
+
+    return tx.candidate.delete({
+      where: { id: candidateId },
+      select: { id: true }
+    });
+  });
+}
 export async function getAdminDashboardStats() {
   const now = new Date();
   const [
@@ -363,3 +386,5 @@ export async function unblockAdminUser(userId: string) {
     select: { id: true, email: true, role: true, isActive: true }
   });
 }
+
+

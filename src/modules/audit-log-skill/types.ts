@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+﻿import type { Prisma } from "@prisma/client";
 
 export type SensitiveAction =
   | "ADMIN_LOGIN"
@@ -52,3 +52,4 @@ export type CreateAuditLogInput = {
   entityId?: string;
   metadata?: Prisma.InputJsonValue;
 };
+

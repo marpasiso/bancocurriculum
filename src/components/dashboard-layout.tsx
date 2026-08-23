@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { UserRole } from "@prisma/client";
 import Image from "next/image";
 import { getEmployerSubscriptionState } from "@/modules/subscription-gate-skill/service";
+import { logoutAction } from "@/modules/employer-auth-skill/actions";
 import { DashboardNav } from "./dashboard-nav";
 import { EmployerSubscriptionNotice } from "./employer-subscription-notice";
 
@@ -88,6 +89,8 @@ function Sidebar({
 }
 
 function Topbar({ user, title }: { user: DashboardUser; title: string }) {
+  const userInitials = initials(user.email);
+
   return (
     <header className="dashboard-topbar">
       <label className="mobile-sidebar-button" htmlFor="dashboard-drawer-toggle">
@@ -98,7 +101,24 @@ function Topbar({ user, title }: { user: DashboardUser; title: string }) {
         <span>Banco de Pessoas para Oportunidades de Trabalho</span>
       </div>
       <div className="topbar-account">
-        <span>{initials(user.email)}</span>
+        {user.role === "EMPLOYER" ? (
+          <details className="topbar-account-menu">
+            <summary aria-label="Abrir menu da conta do empregador">
+              <span className="topbar-account-avatar">{userInitials}</span>
+              <span className="topbar-account-label">Conta</span>
+              <span className="topbar-account-arrow" aria-hidden="true">▾</span>
+            </summary>
+            <div className="topbar-account-panel">
+              <strong>{user.employer?.companyName ?? "Empregador"}</strong>
+              <small>{user.email}</small>
+              <form action={logoutAction}>
+                <button type="submit">Sair</button>
+              </form>
+            </div>
+          </details>
+        ) : (
+          <span className="topbar-account-avatar" aria-label={`Usuário autenticado: ${user.email}`}>{userInitials}</span>
+        )}
       </div>
     </header>
   );

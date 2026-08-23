@@ -1,7 +1,7 @@
 import { AppButton, ResponsiveActions } from "@/components/app-actions";
 import { CharacterCountedTextarea } from "@/components/character-counted-textarea";
 import { CandidateJobFunctionsAutocomplete } from "@/components/candidate-job-functions-autocomplete";
-import { CandidateStateAutocomplete } from "@/components/candidate-state-autocomplete";
+import { CandidateLocationFields } from "@/components/candidate-location-fields";
 import { EmptyState, PageHeader, Section } from "@/components/ui";
 import { MaskedInput } from "@/components/masked-input";
 import { createCandidateAction } from "@/modules/candidate-registration-skill/actions";
@@ -21,9 +21,9 @@ export default async function CandidatePage({ searchParams }: { searchParams: { 
       <Section>
         <form className="form-card" action={createCandidateAction}>
           <div className="form-grid">
-            <label>Nome completo<input name="fullName" autoComplete="name" maxLength={120} required /></label>
-            <label>E-mail<input name="email" type="email" autoComplete="email" inputMode="email" maxLength={160} required /></label>
-            <label>Telefone<MaskedInput autoComplete="tel" inputMode="tel" mask="phone" name="phone" required /></label>
+            <label>Nome completo<input name="fullName" autoComplete="name" maxLength={120} placeholder="Informe seu nome completo" required /></label>
+            <label>E-mail<input name="email" type="email" autoComplete="email" inputMode="email" maxLength={160} placeholder="Informe seu email" required /></label>
+            <label>Telefone<MaskedInput autoComplete="tel" inputMode="tel" mask="phone" name="phone" placeholder="Informe o telefone com DDD" required /></label>
             <div className="full-span form-field-block">
               {jobFunctions.length > 0 ? (
                 <CandidateJobFunctionsAutocomplete options={jobFunctions} />
@@ -34,10 +34,7 @@ export default async function CandidatePage({ searchParams }: { searchParams: { 
                 />
               )}
             </div>
-            <label>Cidade<input name="city" maxLength={80} required /></label>
-            <div className="form-field-block">
-              <CandidateStateAutocomplete />
-            </div>
+            <CandidateLocationFields />
             <label className="full-span">Resumo profissional<CharacterCountedTextarea maxLength={800} name="summary" required /></label>
             <label className="full-span">Experiência<CharacterCountedTextarea maxLength={1500} name="experience" /></label>
             <label className="full-span">Formação<CharacterCountedTextarea maxLength={800} name="education" required /></label>

@@ -438,7 +438,7 @@ main.public-home {
 }
 
 .dashboard-user > span,
-.topbar-account span {
+.topbar-account-avatar {
   display: grid;
   flex: 0 0 auto;
   width: 34px;
@@ -451,6 +451,96 @@ main.public-home {
   font-weight: 900;
 }
 
+.dashboard-topbar .topbar-account {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.topbar-account-menu {
+  position: relative;
+}
+
+.topbar-account-menu summary {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 8px 2px 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--primary);
+  background: #ffffff;
+  cursor: pointer;
+  list-style: none;
+}
+
+.topbar-account-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.topbar-account-menu summary:focus-visible {
+  outline: 3px solid rgba(28, 126, 214, 0.25);
+  outline-offset: 2px;
+}
+
+.topbar-account-label,
+.topbar-account-arrow {
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.topbar-account-menu[open] .topbar-account-arrow {
+  transform: rotate(180deg);
+}
+
+.dashboard-topbar .topbar-account-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  min-width: min(260px, calc(100vw - 24px));
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.topbar-account-panel strong {
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.topbar-account-panel small {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.topbar-account-panel form {
+  margin-top: 6px;
+}
+
+.topbar-account-panel button {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: var(--danger);
+  background: #fff7f7;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.topbar-account-panel button:hover {
+  background: #fee2e2;
+}
 .dashboard-main {
   min-width: 0;
 }
@@ -481,7 +571,7 @@ main.public-home {
 }
 
 .dashboard-topbar span {
-  color: var(--muted);
+  /* color: var(--muted); */
   font-size: 0.82rem;
 }
 
@@ -752,6 +842,12 @@ button:hover,
   width: auto;
 }
 
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
 .muted {
   color: var(--muted);
 }
@@ -890,14 +986,35 @@ button:hover,
   box-shadow: none;
 }
 
+.candidate-reservation-form {
+  width: min(100%, 560px);
+}
+
+.candidate-reservation-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
 .job-reservation-select {
-  min-width: min(320px, 100%);
+  min-width: 0;
   margin-bottom: 0;
 }
 
 .inline-form .field-help {
   width: 100%;
-  max-width: 260px;
+  max-width: none;
+}
+
+@media (max-width: 720px) {
+  .candidate-reservation-form {
+    width: 100%;
+  }
+
+  .candidate-reservation-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .job-action-confirm {
@@ -1509,6 +1626,13 @@ tr:last-child td {
 
   .dashboard-topbar > div:not(.topbar-account) span {
     display: none;
+  }
+  .topbar-account-label {
+    display: none;
+  }
+
+  .topbar-account-menu summary {
+    padding-right: 6px;
   }
 
   .dashboard-content {

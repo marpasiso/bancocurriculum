@@ -23,7 +23,7 @@ const steps = [
   },
   {
     icon: <BusinessCenterIcon color="primary" />,
-    title: "Ative o acesso da empresa",
+    title: "Empregador encontre candidatos ",
     text: "Empregadores autorizados ativam o acesso semanal para consultar profissionais."
   },
   {

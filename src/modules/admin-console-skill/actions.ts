@@ -6,7 +6,7 @@ import { errorParam, toFriendlyError } from "@/lib/validation-errors";
 import { requireAdminUser, requireOperationalAdminUser, requireSuperAdminUser } from "@/modules/security-skill/permissions";
 import {
   activateAdminSubscription,
-  anonymizeManagedCandidate,
+  deleteManagedCandidate,
   blockManagedEmployer,
   blockManagedAdminUser,
   confirmAdminPixReceived,
@@ -233,17 +233,17 @@ export async function reactivateCandidateByAdminAction(formData: FormData) {
   redirect("/admin/candidatos?candidateReactivated=1");
 }
 
-export async function anonymizeCandidateByAdminAction(formData: FormData) {
-  const admin = await requireSuperAdminUser();
+export async function deleteCandidateByAdminAction(formData: FormData) {
+  const admin = await requireOperationalAdminUser();
   try {
-    await anonymizeManagedCandidate(admin.id, admin.role, {
+    await deleteManagedCandidate(admin.id, admin.role, {
       candidateId: getString(formData, "candidateId")
     });
   } catch (error) {
     redirect(`/admin/candidatos?error=${errorParam(toFriendlyError(error))}`);
   }
 
-  redirect("/admin/candidatos?candidateAnonymized=1");
+  redirect("/admin/candidatos?candidateDeleted=1");
 }
 
 export async function blockEmployerAction(formData: FormData) {

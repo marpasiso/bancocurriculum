@@ -5,6 +5,8 @@ import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
+const MAX_SELECTED_JOB_FUNCTIONS = 8;
+
 type JobFunctionOption = {
   id: string;
   name: string;
@@ -13,22 +15,32 @@ type JobFunctionOption = {
 
 export function CandidateJobFunctionsAutocomplete({ options }: { options: JobFunctionOption[] }) {
   const [selected, setSelected] = useState<JobFunctionOption[]>([]);
+  const reachedLimit = selected.length >= MAX_SELECTED_JOB_FUNCTIONS;
 
   return (
     <>
       <Autocomplete
         disableCloseOnSelect
         filterSelectedOptions
+        getOptionDisabled={() => reachedLimit}
         getOptionLabel={(option) => option.name}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         multiple
         noOptionsText="Nenhuma função disponível"
-        onChange={(_, value) => setSelected(value)}
+        onChange={(_, value) => {
+          if (value.length <= MAX_SELECTED_JOB_FUNCTIONS) {
+            setSelected(value);
+          }
+        }}
         options={options}
         renderInput={(params) => (
           <TextField
             {...params}
-            helperText="Selecione uma ou mais funções para as quais deseja se candidatar."
+            helperText={
+              reachedLimit
+                ? `Você pode selecionar no máximo ${MAX_SELECTED_JOB_FUNCTIONS} funções.`
+                : `Selecione até ${MAX_SELECTED_JOB_FUNCTIONS} funções de interesse.`
+            }
             label="Funções de interesse"
             required={selected.length === 0}
             size="small"

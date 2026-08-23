@@ -26,6 +26,13 @@ enum LgpdRequestType {
   REVOCATION
 }
 
+enum LgpdRequestStatus {
+  PENDING
+  IN_REVIEW
+  COMPLETED
+  REJECTED
+}
+
 enum CandidateAvailabilityStatus {
   AVAILABLE
   IN_PROCESS
@@ -231,12 +238,14 @@ model ConsentSnapshot {
 }
 
 model LgpdRequest {
-  id          String          @id @default(cuid())
+  id          String            @id @default(cuid())
   type        LgpdRequestType
+  status      LgpdRequestStatus @default(PENDING)
   fullName    String
   email       String
-  description String          @db.Text
-  createdAt   DateTime        @default(now())
+  description String            @db.Text
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
 
 model Payment {

@@ -6,7 +6,7 @@ import { systemJobFunctionSelectionSchema } from "@/modules/job-functions-skill/
 export const candidateRegistrationSchema = z
   .object({
     fullName: z.string().trim().min(3).max(120, "O nome deve ter no máximo 120 caracteres."),
-    email: z.string().trim().max(160, "Informe um e-mail mais curto.").email("Informe um e-mail válido.").transform((value) => value.toLowerCase()),
+    email: z.string().trim().max(160, "Informe um e-mail mais curto.").email("Informe um email válido.").transform((value) => value.toLowerCase()),
     phone: z.string().trim().max(15, "Informe um telefone válido.").transform((value) => value.replace(/\D/g, "")).refine((value) => /^\d{10,11}$/.test(value), "Informe um telefone válido."),
     city: z.string().trim().min(2).max(80, "A cidade deve ter no máximo 80 caracteres."),
     state: z
@@ -31,4 +31,4 @@ export const candidateRegistrationSchema = z
     references: z.string().trim().max(1000, "O texto informado ultrapassa o limite permitido.").optional(),
     acceptedLgpd: acceptedConsentSchema
   })
-  .strict("Upload de currículo, PDF, imagem ou documento não é permitido neste MVP.");
+  .strict("Upload de currículo, PDF, imagem ou documento não é permitido.");

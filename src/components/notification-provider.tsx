@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
@@ -34,6 +34,7 @@ const successMessages: Record<string, string> = {
   candidateInProcess: "Candidato reservado com sucesso.",
   candidateReactivated: "Candidato reativado com sucesso.",
   candidateAnonymized: "Candidato anonimizado com sucesso.",
+  candidateDeleted: "Candidato excluído com sucesso.",
   activated: "Registro ativado com sucesso.",
   deactivated: "Registro inativado com sucesso."
 };
@@ -172,3 +173,5 @@ function NotificationEvents() {
 
   return null;
 }
+
+

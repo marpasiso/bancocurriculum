@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -21,7 +21,7 @@ import { StatusChip } from "@/components/ui/StatusChip";
 import { TableActions } from "@/components/ui/TableActions";
 import { errorParam, toFriendlyError } from "@/lib/validation-errors";
 import {
-  anonymizeCandidateByAdminAction,
+  deleteCandidateByAdminAction,
   confirmCandidateHiringByAdminAction,
   inactivateCandidateByAdminAction,
   reactivateCandidateByAdminAction,
@@ -78,13 +78,10 @@ function availabilityTone(status: string): "success" | "danger" | "warning" | "n
 }
 
 function disabledReason(input: {
-  action: "edit" | "inactivate" | "reactivate" | "anonymize";
+  action: "edit" | "inactivate" | "reactivate" | "delete";
   isActive: boolean;
-  isSuperAdmin: boolean;
+  // isSuperAdmin: boolean;
 }) {
-  if (input.action === "anonymize" && !input.isSuperAdmin) {
-    return "Esta ação exige permissão administrativa adicional.";
-  }
 
   if (input.action === "inactivate" && !input.isActive) {
     return "O candidato já está inativo.";
@@ -329,9 +326,9 @@ export default async function AdminCandidatesPage({
         <AppDataTable
           actionCount={7}
           actions={(candidate) => {
-            const inactivateReason = disabledReason({ action: "inactivate", isActive: candidate.isActive, isSuperAdmin });
-            const reactivateReason = disabledReason({ action: "reactivate", isActive: candidate.isActive, isSuperAdmin });
-            const anonymizeReason = disabledReason({ action: "anonymize", isActive: candidate.isActive, isSuperAdmin });
+            const inactivateReason = disabledReason({ action: "inactivate", isActive: candidate.isActive });
+            const reactivateReason = disabledReason({ action: "reactivate", isActive: candidate.isActive });
+            const deleteReason = disabledReason({ action: "delete", isActive: candidate.isActive });
 
             return (
               <TableActions
@@ -383,12 +380,12 @@ export default async function AdminCandidatesPage({
                   },
                   {
                     color: "error",
-                    confirmMessage: "Confirma a anonimização deste candidato? Os dados pessoais serão substituídos e o cadastro ficará inativo.",
-                    disabled: Boolean(anonymizeReason),
-                    formAction: anonymizeCandidateByAdminAction,
+                    confirmMessage: "Confirma a exclusão deste candidato? Esta ação remove o cadastro e não pode ser desfeita.",
+                    disabled: Boolean(deleteReason),
+                    formAction: deleteCandidateByAdminAction,
                     hiddenInputs: [{ name: "candidateId", value: candidate.id }],
                     icon: <DeleteOutlineIcon fontSize="small" />,
-                    label: anonymizeReason || "Anonimizar candidato"
+                    label: deleteReason || "Excluir candidato"
                   }
                 ]}
               />
@@ -403,3 +400,6 @@ export default async function AdminCandidatesPage({
     </main>
   );
 }
+
+
+

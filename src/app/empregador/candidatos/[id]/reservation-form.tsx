@@ -2,7 +2,6 @@
 
 import { AppButton } from "@/components/app-actions";
 import { startCandidateProcessAction } from "@/modules/candidate-detail-skill/actions";
-import Stack from "@mui/material/Stack";
 import { useMemo, useState } from "react";
 
 type CompatibleJobOpening = {
@@ -32,14 +31,9 @@ export function CandidateReservationForm({
   const canReserve = compatibleJobOpeningIds.has(selectedJobOpeningId);
 
   return (
-    <form action={startCandidateProcessAction} className="inline-form">
+    <form action={startCandidateProcessAction} className="inline-form candidate-reservation-form">
       <input name="candidateId" type="hidden" value={candidateId} />
-      <Stack
-        alignItems={{ xs: "stretch", sm: "end" }}
-        direction={{ xs: "column", sm: "row" }}
-        spacing={1}
-        sx={{ width: "100%" }}
-      >
+      <div className="candidate-reservation-row">
         <label className="job-reservation-select" htmlFor="candidate-reservation-job">
           Vaga compatível
           <select
@@ -60,13 +54,13 @@ export function CandidateReservationForm({
         </label>
         <AppButton
           disabled={!canReserve}
-          sx={{ width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%" }}
           type="submit"
           variant="contained"
         >
           Reservar candidato
         </AppButton>
-      </Stack>
+      </div>
       {helpMessage ? <span className="field-help">{helpMessage}</span> : null}
     </form>
   );

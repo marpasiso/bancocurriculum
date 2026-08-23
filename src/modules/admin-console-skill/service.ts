@@ -1,4 +1,4 @@
-import type { UserRole } from "@prisma/client";
+﻿import type { UserRole } from "@prisma/client";
 import { getAdminDataRequests } from "@/modules/data-request-skill/service";
 import { recordAuditLog } from "@/modules/audit-log-skill/service";
 import {
@@ -27,6 +27,7 @@ import {
   findEmployerForAdminConsole,
   findCandidateForAdminConsole,
   findDataRequestForCandidateAnonymization,
+  completeDataRequestForCandidateAnonymization,
   findAdminUserForManagement,
   findUserByEmailForAdminConsole,
   getAdminDashboardStats,
@@ -37,6 +38,7 @@ import {
   type AdminCandidateSearchFilters,
   listEmployersForAdminConsole,
   anonymizeCandidateForAdminConsole,
+  deleteCandidateForAdminConsole,
   unblockEmployerForAdminConsole,
   unblockAdminUser,
   updateCandidateActiveStatus,
@@ -61,7 +63,7 @@ import {
 
 const adminRoles = ["ADMIN", "SUPER_ADMIN"] as const;
 
-function ensureAdminCandidatePermission(role: UserRole, action: "view" | "edit" | "inactivate" | "reactivate" | "anonymize") {
+function ensureAdminCandidatePermission(role: UserRole, action: "view" | "edit" | "inactivate" | "reactivate" | "anonymize" | "delete") {
   if (!adminRoles.includes(role as (typeof adminRoles)[number])) {
     throw new Error("Você não tem permissão para executar esta ação.");
   }
@@ -256,6 +258,10 @@ export async function anonymizeManagedCandidate(actorUserId: string, actorRole: 
   });
   const updatedCandidate = await anonymizeCandidateForAdminConsole(candidate.id);
 
+  if (dataRequest) {
+    await completeDataRequestForCandidateAnonymization(dataRequest.id);
+  }
+
   await recordAuditLog({
     userId: actorUserId,
     action: "CANDIDATE_ANONYMIZED",
@@ -272,6 +278,42 @@ export async function anonymizeManagedCandidate(actorUserId: string, actorRole: 
   return updatedCandidate;
 }
 
+
+export async function deleteManagedCandidate(actorUserId: string, actorRole: UserRole, input: unknown) {
+  ensureAdminCandidatePermission(actorRole, "delete");
+  const data = candidateManagementSchema.parse(input);
+  const candidate = await findCandidateForAdminConsole(data.candidateId);
+
+  if (!candidate) {
+    throw new Error("Candidato não encontrado.");
+  }
+
+  const dataRequest = await findDataRequestForCandidateAnonymization({
+    email: candidate.email,
+    fullName: candidate.fullName
+  });
+
+  await deleteCandidateForAdminConsole(candidate.id);
+
+  if (dataRequest) {
+    await completeDataRequestForCandidateAnonymization(dataRequest.id);
+  }
+
+  await recordAuditLog({
+    userId: actorUserId,
+    action: "CANDIDATE_DELETED",
+    entity: "Candidate",
+    entityId: candidate.id,
+    metadata: {
+      previousEmail: candidate.email,
+      previousFullName: candidate.fullName,
+      dataRequestId: dataRequest?.id,
+      dataRequestType: dataRequest?.type
+    }
+  });
+
+  return { id: candidate.id };
+}
 export async function getAdminUsersData() {
   return listAdminUsersForConsole();
 }
@@ -534,3 +576,8 @@ export async function confirmAdminPendingPixPayment(adminUserId: string, input: 
   const data = adminSubscriptionFormSchema.parse(input);
   return confirmPendingSubscriptionPayment({ ...data, adminUserId });
 }
+
+
+
+
+

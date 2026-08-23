@@ -7,7 +7,7 @@ const pages: Record<string, LegalPage> = {
   },
   terms: {
     title: "Termos de Uso",
-    body: "Este MVP é para teste local. Pagamentos são manuais e assinaturas liberam acesso por 7 dias após validação administrativa."
+    body: ""
   },
   lgpd: {
     title: "Solicitação sobre dados pessoais",

@@ -2,13 +2,13 @@
 
 ## 1. Visão geral do sistema
 
-O Banco de Currículos é um sistema para cadastrar candidatos, organizar vagas de empregadores e permitir a busca de candidatos compatíveis com cada oportunidade.
+O Banco de Currículos é um sistema para cadastrar perfis profissionais, organizar vagas de empregadores e permitir que empresas encontrem candidatos compatíveis com cada oportunidade.
 
 O sistema atende três perfis principais:
 
-- Candidato: cadastra seus dados profissionais em página pública, sem login.
+- Candidato: preenche seus dados profissionais em uma página pública, sem login.
 - Empregador: cria conta, mantém assinatura ativa, cadastra vagas e busca candidatos.
-- Admin: administra funções globais, candidatos, empregadores, pagamentos Pix manuais e solicitações de dados pessoais.
+- Administrador: administra funções globais, candidatos, empregadores, pagamentos Pix manuais e solicitações sobre dados pessoais.
 
 O sistema não recebe upload de currículo, imagem, PDF ou documento. O cadastro do candidato é feito por formulário.
 
@@ -16,18 +16,18 @@ O sistema não recebe upload de currículo, imagem, PDF ou documento. O cadastro
 
 Para o fluxo funcionar de forma completa, siga esta ordem:
 
-1. O admin acessa o painel e cadastra funções globais em **Funções globais**.
+1. O administrador cadastra funções globais em **Funções globais**.
 2. O candidato acessa a página pública de cadastro e preenche o perfil profissional.
 3. O candidato escolhe uma ou mais funções de interesse.
 4. O candidato aceita a autorização de uso dos dados e envia o cadastro.
 5. O empregador cria sua conta.
 6. O empregador acessa **Assinatura** e solicita a cobrança Pix.
-7. O admin confirma manualmente o pagamento em **Pagamentos Pix**.
+7. O administrador confirma manualmente o pagamento em **Pagamentos Pix**.
 8. Após a confirmação, a assinatura do empregador fica ativa por 7 dias.
 9. O empregador cadastra uma vaga em **Minhas vagas**.
 10. O empregador busca candidatos para a vaga aberta.
 11. O empregador visualiza os detalhes de um candidato compatível e reserva o candidato.
-12. O admin confirma a contratação ou devolve o candidato para disponível.
+12. O administrador confirma a contratação ou cancela a reserva e devolve o candidato para disponível.
 
 ## 3. Manual do candidato
 
@@ -54,13 +54,15 @@ O candidato deve informar:
 
 As funções de interesse são importantes porque o sistema usa essas informações para aproximar candidatos das vagas cadastradas pelos empregadores.
 
+Se não houver funções ativas, o cadastro pode ficar indisponível até que o administrador cadastre ou ative funções globais.
+
 ### Autorização de uso dos dados
 
 O candidato precisa marcar a autorização de uso dos dados antes de enviar o cadastro.
 
 Sem essa autorização, o cadastro não deve ser enviado.
 
-Após o envio, o sistema registra a autorização e mantém o histórico necessário para conferência administrativa.
+Após o envio, o sistema registra a autorização com as informações necessárias para conferência administrativa.
 
 ### Após o envio
 
@@ -73,7 +75,7 @@ Depois do cadastro:
 
 ### Solicitar alteração, exclusão ou revogação
 
-O candidato ou titular dos dados pode acessar a página pública de solicitações de dados pessoais.
+O candidato ou titular dos dados pode acessar a página pública de solicitações sobre dados pessoais.
 
 Na página, deve escolher o tipo de solicitação:
 
@@ -85,21 +87,15 @@ Nenhuma alteração é feita automaticamente. O pedido fica disponível para an�
 
 ## 4. Manual do empregador
 
-### Criar conta
+### Criar conta e acessar
 
-O empregador acessa a página de cadastro de empregador e informa:
-
-- nome da empresa;
-- responsável;
-- CPF ou CNPJ;
-- e-mail;
-- senha.
+O empregador acessa a página de cadastro de empregador e informa os dados solicitados, como empresa, responsável, CPF ou CNPJ, e-mail e senha.
 
 Após criar a conta, o empregador usa o login para acessar a área do empregador.
 
 ### Verificar assinatura
 
-No painel do empregador, o card **Status da assinatura** mostra se o acesso está liberado, pendente ou bloqueado.
+No painel do empregador, a área **Status da assinatura** mostra se o acesso está liberado, pendente ou bloqueado.
 
 A busca de candidatos e a visualização de detalhes exigem assinatura ativa.
 
@@ -129,15 +125,15 @@ Na vaga, deve informar:
 - descrição;
 - requisitos.
 
-O **Título da vaga** é um texto livre para identificar a oportunidade.
+O **Título da vaga** identifica a oportunidade para o empregador.
 
-A **Função/cargo principal** é o campo padronizado usado pelo sistema para encontrar candidatos compatíveis. Esse campo depende das funções globais cadastradas pelo admin.
+A **Função/cargo principal** é usada pelo sistema para encontrar candidatos compatíveis. Esse campo depende das funções globais cadastradas pelo administrador.
 
 Se não houver funções ou cargos ativos, o cadastro da vaga fica indisponível e o empregador deve procurar o administrador.
 
 ### Gerenciar vagas
 
-Em **Minhas vagas**, o empregador pode acompanhar:
+Em **Minhas vagas**, o empregador acompanha:
 
 - status da vaga;
 - função/cargo principal;
@@ -145,13 +141,15 @@ Em **Minhas vagas**, o empregador pode acompanhar:
 - quantidade de vagas;
 - reservas ativas.
 
-Para vagas abertas, o empregador pode buscar candidatos para aquela vaga.
+Para vagas abertas, o empregador pode usar **Buscar candidatos para esta vaga**.
 
-Também pode pausar, encerrar ou cancelar vagas conforme as ações disponíveis na tela.
+Também pode usar as ações disponíveis para **Pausar vaga**, **Tirar da pausa**, **Encerrar vaga** ou **Cancelar vaga**, conforme o status atual.
+
+A ação **Cancelar vaga** deve ser usada somente se a vaga não será mais utilizada.
 
 ### Buscar candidatos
 
-O empregador deve buscar candidatos preferencialmente a partir de uma vaga aberta.
+O empregador deve buscar candidatos a partir de uma vaga aberta.
 
 Quando a busca é feita por vaga, o sistema cruza a função/cargo principal da vaga com as funções de interesse dos candidatos.
 
@@ -175,13 +173,13 @@ Depois da reserva:
 
 - o candidato fica reservado;
 - o candidato deixa de aparecer na busca comum;
-- o admin deve confirmar contratação ou devolver o candidato para disponível.
+- o administrador deve confirmar contratação ou devolver o candidato para disponível.
 
-## 5. Manual do admin
+## 5. Manual do administrador
 
 ### Acessar o painel
 
-O admin acessa o sistema pela tela de login e entra no painel administrativo.
+O administrador acessa o sistema pela tela de login e entra no painel administrativo.
 
 O painel mostra indicadores de:
 
@@ -193,7 +191,7 @@ O painel mostra indicadores de:
 
 ### Cadastrar funções globais
 
-O admin deve acessar **Funções globais** antes de candidatos e empregadores usarem completamente o sistema.
+O administrador deve acessar **Funções globais** antes de candidatos e empregadores usarem completamente o sistema.
 
 Cada função global pode ter:
 
@@ -209,18 +207,18 @@ As funções globais são usadas em dois pontos:
 
 ### Gerenciar candidatos
 
-Em **Candidatos**, o admin pode:
+Em **Candidatos**, o administrador pode:
 
 - buscar candidatos por nome, cidade ou cargo/função;
-- visualizar detalhes administrativos;
+- visualizar dados completos;
 - editar dados do candidato;
 - inativar candidato;
 - reativar candidato quando permitido;
 - confirmar contratação;
 - devolver candidato reservado para disponível;
-- anonimizar dados quando houver permissão administrativa adequada.
+- ocultar dados pessoais quando houver permissão administrativa adequada.
 
-Quando o candidato está reservado, o admin pode confirmar a contratação ou devolvê-lo para disponível.
+Quando o candidato está reservado, o administrador pode confirmar a contratação ou devolvê-lo para disponível.
 
 Ao confirmar contratação:
 
@@ -230,7 +228,7 @@ Ao confirmar contratação:
 
 ### Gerenciar empregadores
 
-Em **Empregadores**, o admin pode:
+Em **Empregadores**, o administrador pode:
 
 - visualizar contas cadastradas;
 - editar dados do empregador;
@@ -241,22 +239,22 @@ Conta bloqueada ou sem assinatura ativa não deve liberar busca de candidatos.
 
 ### Confirmar Pix manual
 
-Em **Pagamentos Pix**, o admin configura os dados usados na cobrança da assinatura:
+Em **Pagamentos Pix**, o administrador configura os dados usados na cobrança da assinatura:
 
 - valor da assinatura;
 - chave Pix;
 - nome do recebedor;
 - cidade do recebedor.
 
-O admin pode gerar cobrança Pix para um empregador e confirmar o pagamento recebido.
+O administrador pode gerar cobrança Pix para um empregador e confirmar o pagamento recebido.
 
 Gerar cobrança Pix não ativa assinatura.
 
 Somente a confirmação do pagamento recebido ativa a assinatura por 7 dias.
 
-### Tratar solicitações de dados
+### Tratar solicitações sobre dados pessoais
 
-Em **Solicitações de dados**, o admin acompanha pedidos públicos sobre dados pessoais.
+Em **Solicitações de dados**, o administrador acompanha pedidos públicos sobre dados pessoais.
 
 Os pedidos podem ser de:
 
@@ -264,13 +262,13 @@ Os pedidos podem ser de:
 - análise de exclusão;
 - revogação de autorização.
 
-O admin deve analisar cada pedido antes de alterar qualquer dado. O sistema não executa exclusão automática.
+O administrador deve analisar cada pedido antes de alterar qualquer dado. O sistema não executa exclusão automática.
 
 ## 6. Fluxo de vaga e reserva
 
 O fluxo correto é:
 
-1. Admin cadastra uma função global ativa.
+1. Administrador cadastra uma função global ativa.
 2. Candidato escolhe essa função como interesse no cadastro.
 3. Empregador cria uma vaga e seleciona essa função/cargo principal.
 4. Empregador busca candidatos para a vaga.
@@ -278,7 +276,7 @@ O fluxo correto é:
 6. Empregador abre os detalhes do candidato.
 7. Empregador reserva o candidato para uma vaga compatível.
 8. O candidato reservado sai da busca comum.
-9. Admin confirma contratação ou devolve o candidato para disponível.
+9. Administrador confirma contratação ou devolve o candidato para disponível.
 
 Regras importantes desse fluxo:
 
@@ -296,8 +294,8 @@ O fluxo correto é:
 3. Empregador solicita a cobrança Pix.
 4. O sistema mostra QR Code e Pix copia e cola.
 5. Empregador realiza o pagamento fora do sistema.
-6. Admin acessa **Pagamentos Pix**.
-7. Admin confirma o pagamento recebido.
+6. Administrador acessa **Pagamentos Pix**.
+7. Administrador confirma o pagamento recebido.
 8. A assinatura é ativada por 7 dias.
 9. Empregador passa a poder buscar candidatos e abrir detalhes.
 
@@ -305,10 +303,10 @@ Cuidados importantes:
 
 - gerar Pix não libera acesso;
 - pagamento pendente não é assinatura ativa;
-- confirmação manual do admin é obrigatória;
+- confirmação manual do administrador é obrigatória;
 - o valor da assinatura deve estar configurado antes de gerar cobranças.
 
-## 8. Fluxo LGPD: solicitações de dados
+## 8. Solicitações sobre dados pessoais
 
 O sistema mantém proteção mínima para dados pessoais.
 
@@ -319,9 +317,9 @@ Para solicitar alteração, análise de exclusão ou revogação, o titular aces
 Depois do envio:
 
 - o pedido aparece em **Solicitações de dados**;
-- o admin analisa o pedido;
+- o administrador analisa o pedido;
 - nenhuma alteração é feita automaticamente;
-- o admin deve ter cuidado antes de alterar, inativar, anonimizar ou remover qualquer informação.
+- o administrador deve ter cuidado antes de alterar, inativar, ocultar ou remover qualquer informação.
 
 O texto jurídico e a política de privacidade devem ser revisados por profissional jurídico antes de uso comercial.
 
@@ -339,7 +337,7 @@ O texto jurídico e a política de privacidade devem ser revisados por profissio
 - Candidato reservado deixa de aparecer na busca comum.
 - Candidato contratado fica fora da busca.
 - Pix é manual.
-- Admin confirma pagamento manualmente.
+- Administrador confirma pagamento manualmente.
 - Gerar Pix não ativa assinatura.
 - Solicitações de dados não executam exclusão automática.
 - Dados reais e credenciais reais não devem ser usados em ambientes de teste.
@@ -348,13 +346,17 @@ O texto jurídico e a política de privacidade devem ser revisados por profissio
 
 ### Não consigo cadastrar candidato
 
-Verifique se existem funções globais ativas. Se não houver, o admin deve cadastrar ou ativar funções em **Funções globais**.
+Verifique se existem funções globais ativas. Se não houver, o administrador deve cadastrar ou ativar funções em **Funções globais**.
 
 Também confirme se a autorização de uso dos dados foi marcada.
 
 ### Não consigo cadastrar vaga
 
 Verifique se há funções ou cargos ativos. Sem funções globais ativas, o cadastro de vaga fica indisponível.
+
+### A vaga está pausada
+
+Use a ação **Tirar da pausa** para voltar a usar a vaga, quando essa ação estiver disponível.
 
 ### A busca de candidatos está bloqueada
 
@@ -368,7 +370,7 @@ Se a assinatura estiver vencida ou ausente, solicite nova cobrança Pix em **Ass
 
 Isso é esperado. Gerar Pix não ativa a assinatura.
 
-O admin precisa confirmar o pagamento recebido em **Pagamentos Pix**.
+O administrador precisa confirmar o pagamento recebido em **Pagamentos Pix**.
 
 ### Não encontro candidatos para uma vaga
 
@@ -387,21 +389,21 @@ Verifique se:
 - a vaga está aberta;
 - a vaga é do próprio empregador;
 - o candidato está disponível;
-- o candidato tem interesse compatível com a função/cargo da vaga.
+- o candidato tem interesse compatível com a função/cargo da vaga;
 - uma vaga compatível foi selecionada na tela de detalhes do candidato.
 
 ### O candidato reservado sumiu da busca
 
-Isso é correto. Candidato reservado deixa de aparecer na busca comum até que o admin devolva o candidato para disponível ou confirme a contratação.
+Isso é correto. Candidato reservado deixa de aparecer na busca comum até que o administrador devolva o candidato para disponível ou confirme a contratação.
 
 ### O candidato contratado não voltou para a busca
 
 Isso é correto. Candidato contratado fica fora da busca e não é reativado automaticamente.
 
-### Uma solicitação LGPD não alterou dados automaticamente
+### Uma solicitação sobre dados pessoais não alterou dados automaticamente
 
 Isso é correto. Solicitações de dados ficam em análise administrativa e não executam alteração, exclusão ou revogação automática.
 
-## Pendências conhecidas
+## 11. Pendências conhecidas
 
 Não foram identificadas telas ausentes entre os fluxos descritos neste manual.

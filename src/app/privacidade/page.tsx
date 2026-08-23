@@ -7,10 +7,18 @@ export default function PrivacyPage() {
   return (
     <main>
       <PageHeader eyebrow="Legal" title={page.title} description={page.body} />
-      <Section title="Compromissos do MVP">
-        <div className="card">
-          <p>Os dados são usados para cadastro, busca controlada por empregadores assinantes e auditoria de acesso.</p>
-          <p>Pedidos de alteração, exclusão ou revogação são registrados para análise administrativa e não executam exclusão automática.</p>
+      <Section title="Compromissos do sistema">
+        <div className="card compact-paragraphs">
+          <p>
+            Usamos os dados apenas para cadastrar candidatos, ajudar
+            empregadores autorizados a encontrar pessoas disponíveis e manter a
+            segurança do sistema.
+          </p>
+          <p>
+            Se o candidato pedir alteração, exclusão ou retirada da autorização,
+            a solicitação será analisada pela administração antes de qualquer
+            mudança.
+          </p>
         </div>
       </Section>
     </main>

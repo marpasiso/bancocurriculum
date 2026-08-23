@@ -1,11 +1,22 @@
-"use client";
+﻿"use client";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Alert, Box, Stack, TextField } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import {
+  Alert,
+  Box,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AppButton } from "@/components/app-actions";
 import { notifyWarning } from "@/modules/notifications/user-feedback.skill";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+
 
 type LoginFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -13,12 +24,17 @@ type LoginFormProps = {
   defaultError?: string;
 };
 
-export function LoginForm({ action, defaultEmail = "", defaultError = "" }: LoginFormProps) {
+export function LoginForm({
+  action,
+  defaultEmail = "",
+  defaultError = "",
+}: LoginFormProps) {
   const { enqueueSnackbar } = useSnackbar();
   const [formError, setFormError] = useState(defaultError);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submittingRef = useRef(false);
   const lastValidationRef = useRef("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!defaultError) return;
@@ -37,7 +53,9 @@ export function LoginForm({ action, defaultEmail = "", defaultError = "" }: Logi
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const form = event.currentTarget;
     const email = form.elements.namedItem("email") as HTMLInputElement | null;
-    const password = form.elements.namedItem("password") as HTMLInputElement | null;
+    const password = form.elements.namedItem(
+      "password",
+    ) as HTMLInputElement | null;
 
     if (submittingRef.current) {
       event.preventDefault();
@@ -84,6 +102,13 @@ export function LoginForm({ action, defaultEmail = "", defaultError = "" }: Logi
           size="small"
           type="email"
           onChange={() => setFormError("")}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <EmailOutlinedIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           autoComplete="current-password"
@@ -92,8 +117,26 @@ export function LoginForm({ action, defaultEmail = "", defaultError = "" }: Logi
           name="password"
           required
           size="small"
-          type="password"
+          type={showPassword ? "text" : "password"}
           onChange={() => setFormError("")}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  edge="end"
+                  onClick={() => setShowPassword((current) => !current)}
+                  onMouseDown={(event) => event.preventDefault()}
+                >
+                  {showPassword ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <AppButton
           aria-busy={isSubmitting}
@@ -111,3 +154,4 @@ export function LoginForm({ action, defaultEmail = "", defaultError = "" }: Logi
     </Box>
   );
 }
+

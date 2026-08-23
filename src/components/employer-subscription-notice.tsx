@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import { useSnackbar } from "notistack";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { notifyWarning } from "@/modules/notifications/user-feedback.skill";
 
@@ -34,10 +35,11 @@ export function EmployerSubscriptionNotice({
   status: SubscriptionNoticeStatus | null;
 }) {
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
+  const pathname = usePathname();
   const displayedStatusRef = useRef<SubscriptionNoticeStatus | null>(null);
 
   useEffect(() => {
-    if (!status || displayedStatusRef.current === status) {
+    if (!status || pathname === "/empregador/assinatura" || displayedStatusRef.current === status) {
       return;
     }
 
@@ -90,7 +92,7 @@ export function EmployerSubscriptionNotice({
         </Stack>
       )
     });
-  }, [closeSnackbar, employerId, enqueueSnackbar, status]);
+  }, [closeSnackbar, employerId, enqueueSnackbar, pathname, status]);
 
   return null;
 }
