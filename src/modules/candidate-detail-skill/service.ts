@@ -9,7 +9,10 @@ export async function getCandidateDetailsForEmployer(input: unknown) {
   await ensureEmployerCanAccessCandidates(data.employerId);
 
   return prisma.$transaction(async (tx) => {
-    const candidate = await findCandidateDetails(tx, data.candidateId);
+    const candidate = await findCandidateDetails(tx, {
+      candidateId: data.candidateId,
+      employerId: data.employerId
+    });
     const view = await insertCandidateView(tx, data);
 
     await insertCandidateDetailAuditLog(tx, {

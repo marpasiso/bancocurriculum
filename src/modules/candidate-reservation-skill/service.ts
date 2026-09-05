@@ -307,3 +307,111 @@ async function confirmCandidateReservationHiringByAdminData(data: { adminUserId:
     return updatedReservation;
   });
 }
+
+export async function listEmployerCandidateReservations(employerId: string) {
+  return prisma.candidateReservation.findMany({
+    where: {
+      employerId
+    },
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+      canceledAt: true,
+      hiredAt: true,
+      candidate: {
+        select: {
+          id: true,
+          fullName: true,
+          city: true,
+          state: true,
+          availabilityStatus: true
+        }
+      },
+      jobOpening: {
+        select: {
+          id: true,
+          title: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+}
+
+export async function cancelCandidateReservationByEmployer(input: {
+  employerId: string;
+  actorUserId: string;
+  reservationId: string;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const reservation = await tx.candidateReservation.findFirst({
+      where: {
+        id: input.reservationId,
+        employerId: input.employerId,
+        status: "ACTIVE"
+      },
+      select: {
+        id: true,
+        candidateId: true,
+        employerId: true,
+        jobOpeningId: true,
+        status: true,
+        candidate: {
+          select: {
+            isActive: true,
+            availabilityStatus: true
+          }
+        }
+      }
+    });
+
+    if (!reservation) {
+      throw new Error("Reserva ativa nao encontrada para este empregador.");
+    }
+
+    if (!reservation.candidate.isActive || reservation.candidate.availabilityStatus === "HIRED") {
+      throw new Error("Candidato contratado ou desativado nao pode voltar automaticamente para disponivel.");
+    }
+
+    const updatedReservation = await tx.candidateReservation.update({
+      where: {
+        id: reservation.id
+      },
+      data: {
+        status: "CANCELED",
+        canceledAt: new Date()
+      }
+    });
+
+    await tx.candidate.update({
+      where: {
+        id: reservation.candidateId
+      },
+      data: {
+        availabilityStatus: "AVAILABLE"
+      }
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: input.actorUserId,
+        action: "EMPLOYER_CANDIDATE_RESERVATION_CANCELED",
+        entity: "CandidateReservation",
+        entityId: reservation.id,
+        metadata: {
+          candidateId: reservation.candidateId,
+          employerId: reservation.employerId,
+          jobOpeningId: reservation.jobOpeningId,
+          previousStatus: reservation.status,
+          nextStatus: "CANCELED",
+          candidateNextStatus: "AVAILABLE"
+        }
+      }
+    });
+
+    return updatedReservation;
+  });
+}

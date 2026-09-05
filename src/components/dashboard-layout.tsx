@@ -28,7 +28,7 @@ function adminItems(role: UserRole): DashboardItem[] {
       { href: "/admin/funcoes", label: "Funções globais" },
       { href: "/admin/administradores", label: "Administradores" },
       { href: "/admin/configuracoes", label: "Configurações" }
-    ];
+      ];
   }
 
   if (role === "ADMIN") {
@@ -39,7 +39,7 @@ function adminItems(role: UserRole): DashboardItem[] {
       { href: "/admin/funcoes", label: "Funções globais" },
       { href: "/admin/pagamentos-pix", label: "Pagamentos Pix" },
       { href: "/admin/solicitacoes-lgpd", label: "Solicitações de dados" }
-    ];
+      ];
   }
 
   return [];
@@ -48,10 +48,11 @@ function adminItems(role: UserRole): DashboardItem[] {
 const employerItems: DashboardItem[] = [
   { href: "/empregador/dashboard", label: "Painel" },
   { href: "/empregador/vagas", label: "Minhas vagas" },
+  { href: "/empregador/reservas", label: "Candidatos Reservados" },
   { href: "/empregador/buscar-candidatos", label: "Buscar candidatos" },
   { href: "/empregador/assinatura", label: "Assinatura" },
   { href: "/empregador/minha-conta", label: "Minha conta" }
-];
+  ];
 
 function Sidebar({
   user,
@@ -64,28 +65,28 @@ function Sidebar({
 }) {
   return (
     <aside className="dashboard-sidebar" aria-label="Menu lateral">
-      <div className="dashboard-brand">
-        <Image
-          alt="Janaina Pinheiro Treinamentos"
-          className="dashboard-brand-logo"
-          height={220}
-          priority
-          src="/brand/logo-janaina.jpeg"
-          unoptimized
-          width={640}
-        />
-        <span className="dashboard-brand-title">{title}</span>
-      </div>
-      <DashboardNav items={items} />
-      <div className="dashboard-user">
-        <span>{initials(user.email)}</span>
-        <div>
-          <strong>{user.email}</strong>
-          <small>{user.role === "EMPLOYER" ? "Empregador" : "Usuário administrativo"}</small>
-        </div>
-      </div>
+    <div className="dashboard-brand">
+    <Image
+    alt="Janaina Pinheiro Treinamentos"
+    className="dashboard-brand-logo"
+    height={220}
+    priority
+    src="/brand/logo-janaina.jpeg"
+    unoptimized
+    width={640}
+    />
+    <span className="dashboard-brand-title">{title}</span>
+    </div>
+    <DashboardNav items={items} />
+    <div className="dashboard-user">
+    <span>{initials(user.email)}</span>
+    <div>
+    <strong>{user.email}</strong>
+    <small>{user.role === "EMPLOYER" ? "Empregador" : "Usuário administrativo"}</small>
+    </div>
+    </div>
     </aside>
-  );
+    );
 }
 
 function Topbar({ user, title }: { user: DashboardUser; title: string }) {
@@ -93,18 +94,19 @@ function Topbar({ user, title }: { user: DashboardUser; title: string }) {
 
   return (
     <header className="dashboard-topbar">
-      <label className="mobile-sidebar-button" htmlFor="dashboard-drawer-toggle">
-        Menu
-      </label>
-      <div>
-        <strong>{title}</strong>
-        <span>Banco de Pessoas para Oportunidades de Trabalho</span>
-      </div>
-      <div className="topbar-account">
+    <label className="mobile-sidebar-button" htmlFor="dashboard-drawer-toggle">
+    Menu
+    </label>
+    <div>
+    <strong>{title}</strong>
+    <span>Banco de Pessoas para Oportunidades de Trabalho</span>
+    </div>
+      {/*<div className="topbar-account">
         {user.role === "EMPLOYER" ? (
           <details className="topbar-account-menu">
             <summary aria-label="Abrir menu da conta do empregador">
               <span className="topbar-account-avatar">{userInitials}</span>
+              <span>{user.email}</span>
               <span className="topbar-account-label">Conta</span>
               <span className="topbar-account-arrow" aria-hidden="true">▾</span>
             </summary>
@@ -112,16 +114,16 @@ function Topbar({ user, title }: { user: DashboardUser; title: string }) {
               <strong>{user.employer?.companyName ?? "Empregador"}</strong>
               <small>{user.email}</small>
               <form action={logoutAction}>
-                <button type="submit">Sair</button>
+                <button className="account-logout-button" type="submit">Sair</button>
               </form>
             </div>
           </details>
         ) : (
           <span className="topbar-account-avatar" aria-label={`Usuário autenticado: ${user.email}`}>{userInitials}</span>
         )}
-      </div>
+      </div>*/}
     </header>
-  );
+    );
 }
 
 function DashboardLayout({
@@ -137,39 +139,39 @@ function DashboardLayout({
 }) {
   return (
     <div className="dashboard-shell">
-      <input className="dashboard-drawer-toggle" id="dashboard-drawer-toggle" type="checkbox" />
-      <Sidebar user={user} title={title} items={items} />
-      <label className="dashboard-drawer-backdrop" htmlFor="dashboard-drawer-toggle" />
-      <div className="dashboard-main">
-        <Topbar user={user} title={title} />
-        <div className="dashboard-content">{children}</div>
-      </div>
+    <input className="dashboard-drawer-toggle" id="dashboard-drawer-toggle" type="checkbox" />
+    <Sidebar user={user} title={title} items={items} />
+    <label className="dashboard-drawer-backdrop" htmlFor="dashboard-drawer-toggle" />
+    <div className="dashboard-main">
+    <Topbar user={user} title={title} />
+    <div className="dashboard-content">{children}</div>
     </div>
-  );
+    </div>
+    );
 }
 
 export function AdminDashboardLayout({ user, children }: { user: DashboardUser; children: ReactNode }) {
   return (
     <DashboardLayout user={user} title="Painel administrativo" items={adminItems(user.role)}>
-      {children}
+    {children}
     </DashboardLayout>
-  );
+    );
 }
 
 export async function EmployerDashboardLayout({ user, children }: { user: DashboardUser; children: ReactNode }) {
   const subscriptionState = user.employer
-    ? await getEmployerSubscriptionState(user.employer.id)
-    : null;
+  ? await getEmployerSubscriptionState(user.employer.id)
+  : null;
   const subscriptionNoticeStatus = subscriptionState && subscriptionState.status !== "active"
-    ? subscriptionState.status
-    : null;
+  ? subscriptionState.status
+  : null;
 
   return (
     <DashboardLayout user={user} title="Área do empregador" items={employerItems}>
-      {user.employer ? (
-        <EmployerSubscriptionNotice employerId={user.employer.id} status={subscriptionNoticeStatus} />
+    {user.employer ? (
+      <EmployerSubscriptionNotice employerId={user.employer.id} status={subscriptionNoticeStatus} />
       ) : null}
-      {children}
+    {children}
     </DashboardLayout>
-  );
+    );
 }

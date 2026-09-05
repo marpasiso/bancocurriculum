@@ -7,6 +7,7 @@ import { MaskedInput } from "@/components/masked-input";
 import { createCandidateAction } from "@/modules/candidate-registration-skill/actions";
 import { getActiveSystemJobFunctions } from "@/modules/job-functions-skill/service";
 import { CONSENT_TEXT } from "@/modules/lgpd-consent-skill/service";
+import { EmailInput } from "@/components/email-input";
 
 export default async function CandidatePage({ searchParams }: { searchParams: { error?: string } }) {
   const jobFunctions = await getActiveSystemJobFunctions();
@@ -22,7 +23,7 @@ export default async function CandidatePage({ searchParams }: { searchParams: { 
         <form className="form-card" action={createCandidateAction}>
           <div className="form-grid">
             <label>Nome completo<input name="fullName" autoComplete="name" maxLength={120} placeholder="Informe seu nome completo" required /></label>
-            <label>E-mail<input name="email" type="email" autoComplete="email" inputMode="email" maxLength={160} placeholder="Informe seu email" required /></label>
+            <EmailInput name="email" required />
             <label>Telefone<MaskedInput autoComplete="tel" inputMode="tel" mask="phone" name="phone" placeholder="Informe o telefone com DDD" required /></label>
             <div className="full-span form-field-block">
               {jobFunctions.length > 0 ? (

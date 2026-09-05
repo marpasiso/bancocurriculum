@@ -6,6 +6,7 @@ import { errorParam, toFriendlyError } from "@/lib/validation-errors";
 import { requireAdminUser, requireEmployerUser } from "@/modules/security-skill/permissions";
 import {
   cancelCandidateReservationByAdmin,
+  cancelCandidateReservationByEmployer,
   confirmCandidateReservationHiringByAdmin,
   reserveCandidateForJobOpening
 } from "./service";
@@ -56,4 +57,20 @@ export async function confirmCandidateReservationHiringByAdminAction(formData: F
   }
 
   redirect("/admin/candidatos?candidateHired=1");
+}
+
+export async function cancelCandidateReservationByEmployerAction(formData: FormData) {
+  const user = await requireEmployerUser();
+
+  try {
+    await cancelCandidateReservationByEmployer({
+      employerId: user.employer.id,
+      actorUserId: user.id,
+      reservationId: getString(formData, "reservationId")
+    });
+  } catch (error) {
+    redirect(`/empregador/reservas?error=${errorParam(toFriendlyError(error))}`);
+  }
+
+  redirect("/empregador/reservas?reservationCanceled=1");
 }

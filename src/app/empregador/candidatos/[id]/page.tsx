@@ -1,4 +1,4 @@
-import { InfoRow, PageHeader, Section, StatusBadge } from "@/components/ui";
+import { ButtonLink, InfoRow, PageHeader, Section, StatusBadge } from "@/components/ui";
 import { getCandidateDetailsForEmployer } from "@/modules/candidate-detail-skill/service";
 import { listOpenEmployerJobOpenings } from "@/modules/job-openings-skill/service";
 import { getUserFriendlyErrorMessage, logTechnicalError } from "@/modules/notifications/user-feedback.skill";
@@ -23,6 +23,7 @@ export default async function CandidateDetailsPage({
       }),
       listOpenEmployerJobOpenings({ employerId: user.employer.id })
     ]);
+    const hasActiveReservationForEmployer = candidate.reservations.length > 0;
     const compatibleJobOpenings = jobOpenings.filter((jobOpening) =>
       candidate.interestFunctions.some(
         (interestFunction) => interestFunction.systemJobFunctionId === jobOpening.systemJobFunction.id
@@ -41,11 +42,19 @@ export default async function CandidateDetailsPage({
       <main>
         <PageHeader
           actions={
-            <CandidateReservationForm
-              candidateId={candidate.id}
-              compatibleJobOpenings={compatibleJobOpenings}
-              helpMessage={reservationHelpMessage}
-            />
+            hasActiveReservationForEmployer ? (
+              <div className="notice">
+                <StatusBadge tone="warning">Reservado</StatusBadge>
+                <p>Candidato já reservado pela sua empresa.</p>
+                <ButtonLink href="/empregador/reservas">Ver minhas reservas</ButtonLink>
+              </div>
+            ) : (
+              <CandidateReservationForm
+                candidateId={candidate.id}
+                compatibleJobOpenings={compatibleJobOpenings}
+                helpMessage={reservationHelpMessage}
+              />
+            )
           }
           description="Visualização registrada com segurança antes da exibição dos dados."
           eyebrow="Detalhes do candidato"
@@ -88,7 +97,7 @@ export default async function CandidateDetailsPage({
     return (
       <main>
         <PageHeader
-          description="A visualização de detalhes exige conta ativa, assinatura vigente e candidato disponível."
+          description="A visualização de detalhes exige conta ativa, assinatura vigente e candidato disponível ou reservado pela sua empresa."
           eyebrow="Acesso restrito"
           title="Detalhes bloqueados"
         />

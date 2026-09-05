@@ -9,13 +9,23 @@ export async function insertCandidateView(
   return tx.candidateView.create({ data: input });
 }
 
-export async function findCandidateDetails(tx: Tx, candidateId: string) {
+export async function findCandidateDetails(tx: Tx, input: { candidateId: string; employerId: string }) {
   return tx.candidate.findFirstOrThrow({
     where: {
-      id: candidateId,
+      id: input.candidateId,
       isActive: true,
-      availabilityStatus: "AVAILABLE",
-      consentAccepted: true
+      consentAccepted: true,
+      OR: [
+        { availabilityStatus: "AVAILABLE" },
+        {
+          reservations: {
+            some: {
+              employerId: input.employerId,
+              status: "ACTIVE"
+            }
+          }
+        }
+      ]
     },
     select: {
       id: true,
@@ -29,6 +39,18 @@ export async function findCandidateDetails(tx: Tx, candidateId: string) {
       experience: true,
       education: true,
       references: true,
+      reservations: {
+        where: {
+          employerId: input.employerId,
+          status: "ACTIVE"
+        },
+        take: 1,
+        select: {
+          id: true,
+          jobOpeningId: true,
+          status: true
+        }
+      },
       interestFunctions: {
         select: {
           systemJobFunctionId: true,
