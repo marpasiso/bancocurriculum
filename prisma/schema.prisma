@@ -63,6 +63,7 @@ model User {
   updatedAt    DateTime   @updatedAt
   employer     Employer?
   sessions     Session[]
+  passwordResetTokens PasswordResetToken[]
   auditLogs    AuditLog[]
   createdCandidateReservations CandidateReservation[]
 }
@@ -75,7 +76,19 @@ model Session {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([usedAt])
+}
 model Employer {
   id                   String                @id @default(cuid())
   userId               String                @unique
@@ -305,3 +318,6 @@ model SystemSetting {
 
   @@index([key])
 }
+
+
+

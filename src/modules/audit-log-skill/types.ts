@@ -1,4 +1,4 @@
-﻿import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export type SensitiveAction =
   | "ADMIN_LOGIN"
@@ -43,7 +43,9 @@ export type SensitiveAction =
   | "JOB_OPENING_CANCELED"
   | "CANDIDATE_RESERVED_FOR_JOB_OPENING"
   | "CANDIDATE_RESERVATION_CANCELED"
-  | "CANDIDATE_RESERVATION_HIRING_CONFIRMED";
+  | "CANDIDATE_RESERVATION_HIRING_CONFIRMED"
+  | "PASSWORD_RESET_REQUESTED"
+  | "PASSWORD_RESET_COMPLETED";
 
 export type CreateAuditLogInput = {
   userId?: string;
@@ -52,4 +54,5 @@ export type CreateAuditLogInput = {
   entityId?: string;
   metadata?: Prisma.InputJsonValue;
 };
+
 

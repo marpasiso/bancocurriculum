@@ -25,7 +25,7 @@ import { LoginForm } from "./login-form";
 export default async function LoginPage({
   searchParams
 }: {
-  searchParams: { email?: string; error?: string };
+  searchParams: { email?: string; error?: string; passwordReset?: string };
 }) {
   const user = await getSafeSessionUser();
 
@@ -92,11 +92,23 @@ export default async function LoginPage({
               </Box>
             </Stack>
 
+            {searchParams.passwordReset ? (
+              <Alert severity="success" variant="outlined" sx={{ mb: 2 }}>
+                Senha redefinida com sucesso. Entre usando sua nova senha.
+              </Alert>
+            ) : null}
+
             <LoginForm
               action={loginAction}
               defaultEmail={searchParams.email ?? ""}
               defaultError={searchParams.error ?? ""}
             />
+
+            <Typography variant="body2" align="right" sx={{ mt: 1.25 }}>
+              <MuiLink component={Link} href="/esqueci-minha-senha" sx={{ fontWeight: 800 }}>
+                Esqueci minha senha
+              </MuiLink>
+            </Typography>
 
             <Divider sx={{ my: { xs: 2, md: 3 } }} />
 
@@ -116,3 +128,5 @@ export default async function LoginPage({
     </Container>
   );
 }
+
+
